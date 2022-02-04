@@ -1,0 +1,1 @@
+https://www.docstring.fr/blog/creer-un-bot-discord-avec-python/
