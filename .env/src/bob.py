@@ -4,15 +4,17 @@ import json
 import os
 from dotenv import load_dotenv
 
+## FEATURE : ajouter un postgres classement dans l'alliance
 def getData(uri, mode, pseudo):
     jsonReq = requests.get(uri).json()
     if jsonReq :
         ## FEATURE : ajouter d'autres donnees de la requete
-        jsonMode = jsonReq[mode]['avg']
+        jsonMode = jsonReq[mode]
         if jsonMode :
-            res = jsonMode
+            res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
         else :
             res = 'Aucune donnée en mode : ' + mode + ' pour le joueur : ' + pseudo
+    ## FIXME : catch les types d'erreurs ? 500/404/401 etc
     else :
         res = 'Pseudo introuvable : ' + pseudo
     return res
@@ -20,9 +22,8 @@ def getData(uri, mode, pseudo):
 def getHelp():
     print('COMMANDE : ---------------- HELP')
     rMess = 'HELP :\n'
-    rMess += '!mmr <mode> <pseudo>[]\n'
-    rMess += '<mode> = ranked, aram, normale\n'
-    rMess += "dm Ted'#8930 pour report tout bug"
+    rMess += '!mmr <mode> <pseudo[]>\n'
+    rMess += '<mode> : ranked, aram, normale\n'
     return rMess 
 
 class MyClient(discord.Client):
@@ -39,10 +40,8 @@ class MyClient(discord.Client):
                 await message.channel.send(getHelp())
             elif len(commands) >= 3 :
                 mode = commands[1]
-                ## FIXME : les pseudos avec des espaces
                 pseudo = ' '.join(commands[2:])
                 if pseudo[-3:] == 'zox':
-                    ## FIXME : un seul message suffirait
                     await message.channel.send('A chier Drazox')
 
                 ## DEBUG
