@@ -18,7 +18,12 @@ def getData(uri, mode, pseudo):
     return res
 
 def getHelp():
-    return 'HELP (liste non encore disponible)\n + nouvelle ligne' 
+    print('COMMANDE : ---------------- HELP')
+    rMess = 'HELP :\n'
+    rMess += '!mmr <mode> <pseudo>[]\n'
+    rMess += '<mode> = ranked, aram, normale\n'
+    rMess += "dm Ted'#8930 pour report tout bug"
+    return rMess 
 
 class MyClient(discord.Client):
     async def on_ready(self):
