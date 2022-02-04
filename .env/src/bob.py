@@ -2,7 +2,6 @@ import discord
 import requests
 import json
 import os
-
 from dotenv import load_dotenv
 
 def getData(uri, mode, pseudo):
@@ -19,7 +18,7 @@ def getData(uri, mode, pseudo):
     return res
 
 def getHelp():
-    return 'HELP (liste non encore disponible)'
+    return 'HELP (liste non encore disponible)\n + nouvelle ligne' 
 
 class MyClient(discord.Client):
     async def on_ready(self):
@@ -33,14 +32,13 @@ class MyClient(discord.Client):
             commands = message.content.split()
             if len(commands) == 2 and commands[1] in ['help', 'HELP', 'Help']:
                 await message.channel.send(getHelp())
-            elif len(commands) == 3 :
+            elif len(commands) >= 3 :
                 mode = commands[1]
                 ## FIXME : les pseudos avec des espaces
-                pseudo = commands[2]
+                pseudo = ' '.join(commands[2:])
                 if pseudo[-3:] == 'zox':
                     ## FIXME : un seul message suffirait
                     await message.channel.send('A chier Drazox')
-                    requests.get(uri).json()
 
                 ## DEBUG
                 print('COMMANDE : ' + pseudo+ ' ---- ' + mode)
@@ -58,7 +56,7 @@ class MyClient(discord.Client):
                 else :
                     await message.channel.send('Mode de jeu non existant, !mmr help pour connaitre la liste des commandes')
             else :
-                await message.channel.send('Commande non reconnue ou pseudo avec des espaces (ntm jordan)')
+                await message.channel.send('Commande non reconnue : !mmr help pour la liste des commandes')
 
 ## ------ Launch du client ------------      
 load_dotenv(dotenv_path="config")
