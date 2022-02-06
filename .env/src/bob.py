@@ -10,7 +10,7 @@ def getData(uri, mode, pseudo):
     if jsonReq :
         ## FEATURE : ajouter d'autres donnees de la requete
         jsonMode = jsonReq[mode]
-        if jsonMode :
+        if jsonMode['avg'] :
             res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
         else :
             res = 'Aucune donnée en mode : ' + mode + ' pour le joueur : ' + pseudo
