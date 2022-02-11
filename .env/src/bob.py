@@ -3,14 +3,13 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
-
 ## FEATURE : ajouter un postgres classement dans l'alliance
 def getData(uri, mode, pseudo):
     jsonReq = requests.get(uri).json()
     if jsonReq :
         ## FEATURE : ajouter d'autres donnees de la requete
-        jsonMode = jsonReq[mode]
-        if jsonMode['avg'] :
+        jsonMode = jsonReq[mode]['avg']
+        if jsonMode :
             res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
         else :
             res = 'Aucune donnée en mode : ' + mode + ' pour le joueur : ' + pseudo
@@ -61,7 +60,7 @@ class MyClient(discord.Client):
                     await message.channel.send('Mode de jeu non existant, !mmr help pour connaitre la liste des commandes')
             else :
                 await message.channel.send('Commande non reconnue : !mmr help pour la liste des commandes')
-
+               
 ## ------ Launch du client ------------      
 load_dotenv(dotenv_path="config")
 
