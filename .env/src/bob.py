@@ -3,6 +3,7 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+
 ## FEATURE : ajouter un postgres classement dans l'alliance
 def getData(uri, mode, pseudo):
     jsonReq = requests.get(uri).json()
@@ -10,7 +11,7 @@ def getData(uri, mode, pseudo):
         ## FEATURE : ajouter d'autres donnees de la requete
         jsonMode = jsonReq[mode]['avg']
         if jsonMode :
-            res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
+            res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode) + '(+/- ' +str(jsonReq[mode]['err']) + ')'
         else :
             res = 'Aucune donnée en mode : ' + mode + ' pour le joueur : ' + pseudo
     ## FIXME : catch les types d'erreurs ? 500/404/401 etc
