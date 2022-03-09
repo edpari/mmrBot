@@ -7,13 +7,16 @@ from dotenv import load_dotenv
 ## FEATURE : ajouter un postgres classement dans l'alliance
 def getData(uri, mode, pseudo):
     jsonReq = requests.get(uri).json()
-    if jsonReq :
+    if (jsonReq is not None) :
         ## FEATURE : ajouter d'autres donnees de la requete
-        jsonMode = jsonReq[mode]['avg']
-        if jsonMode :
-            res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode) + '(+/- ' +str(jsonReq[mode]['err']) + ')'
+        if(mode in jsonReq):
+            jsonMode = jsonReq[mode]
+            if ('avg' in jsonMode):
+                res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
+            else:
+                res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
         else :
-            res = 'Aucune donnée en mode : ' + mode + ' pour le joueur : ' + pseudo
+            res = 'Pas assez de parties solo jouées en : ' + mode + ' pour le joueur : ' + pseudo
     ## FIXME : catch les types d'erreurs ? 500/404/401 etc
     else :
         res = 'Pseudo introuvable : ' + pseudo
