@@ -12,7 +12,10 @@ def getData(uri, mode, pseudo):
         if(mode in jsonReq):
             jsonMode = jsonReq[mode]
             if ('avg' in jsonMode):
-                res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
+                if (jsonMode['avg'] is not None) :
+                    res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
+                else :
+                    res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
             else:
                 res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
         else :
