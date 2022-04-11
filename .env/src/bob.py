@@ -3,26 +3,40 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+from requests.exceptions import Timeout
 
 ## FEATURE : ajouter un postgres classement dans l'alliance
 def getData(uri, mode, pseudo):
-    jsonReq = requests.get(uri).json()
-    if (jsonReq is not None) :
-        ## FEATURE : ajouter d'autres donnees de la requete
-        if(mode in jsonReq):
-            jsonMode = jsonReq[mode]
-            if ('avg' in jsonMode):
-                if (jsonMode['avg'] is not None) :
-                    res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
-                else :
-                    res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
-            else:
-                res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
-        else :
-            res = 'Pas assez de parties solo jouées en : ' + mode + ' pour le joueur : ' + pseudo
-    ## FIXME : catch les types d'erreurs ? 500/404/401 etc
+    try :
+        response = requests.get(uri, timeout=5)
+    except Timeout :
+        res = "Le délai de la requête est dépassé"
+        ## DEBUG
+        print('TIMEOUT  : Erreur 504')
     else :
-        res = 'Pseudo introuvable : ' + pseudo
+        if(response.status_code == 200):
+            jsonReq = response.json()
+            if (jsonReq is not None) :
+                ## FEATURE : ajouter d'autres donnees de la requete
+                if(mode in jsonReq):
+                    ## DEBUG
+                    print('COMMANDE : ' + pseudo+ ' ---- ' + mode)
+                    jsonMode = jsonReq[mode]
+                    if ('avg' in jsonMode):
+                        if (jsonMode['avg'] is not None) :
+                            res = 'MMr moyen de ' + pseudo + ': ' + str(jsonMode['avg']) + '(+/- ' +str(jsonMode['err']) + ')'
+                        else :
+                            res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
+                    else:
+                        res = 'Pas assez de partie jouées en : ' + mode + ' pour le joueur : ' + pseudo
+                else :
+                    res = 'Pas assez de parties solo jouées en : ' + mode + ' pour le joueur : ' + pseudo
+            else :
+                res = 'Pseudo introuvable : ' + pseudo
+        else :
+            ## DEBUG
+            print('ERROR    : ' + str(response.status_code))
+            res = 'Erreur interne au serveur'
     return res
 
 def getHelp():
@@ -49,10 +63,6 @@ class MyClient(discord.Client):
                 pseudo = ' '.join(commands[2:])
                 if pseudo[-3:] == 'zox':
                     await message.channel.send('A chier Drazox')
-
-                ## DEBUG
-                print('COMMANDE : ' + pseudo+ ' ---- ' + mode)
-
                 uri = "https://euw.whatismymmr.com/api/v1/summoner?name=" + pseudo
                 if mode in ['ranked','Ranked','solo','soloQ', 'soloq']:
                     jsonRes = getData(uri, 'ranked', pseudo)
